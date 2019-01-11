@@ -13,18 +13,24 @@ function parser(query){
     let previousCache = '';
 
     let checkForDirectEnd = false;
-    let checkForSingleProp = false;
     let inputBlocked = false;
+
+    //ThirdStartRegion
+    let openTagForSecondStep = -1;
+    let checkSlashForSecondStep = false;
+    let previouslyOccupied = false;
+    //#endregion
+
 
     let queryLength = query.length;
 
     function internalParser(resultObject , queryIndex , stack , flag , step=-1){
         //console.log(query[queryIndex-1] , "$" , queryCache , "%" , previousCache , "&" , step)
-
+        
         if(queryIndex >= queryLength){
             return stack[0];
         }
-
+        //console.log(query[queryIndex] , "Exception" , flag);
         if(query[queryIndex].charCodeAt(0) == 10){
             return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag);
         }
@@ -42,7 +48,7 @@ function parser(query){
             }
 
         }else if(flag == 1){
-            console.log(previousCache , queryCache , query[queryIndex]);
+            
             if(query[queryIndex] == '<'){
                 let newObject = {};
                 newObject.__flag = 1;
@@ -107,12 +113,13 @@ function parser(query){
                     queryCache = '';
                     inputBlocked = false;
                 }
+                
                 if(checkForDirectEnd){
                     resultObject.__flag = 4;
-                    return internalParser(resultObject , queryIndex , stack , resultObject.__flag , 4);
+                    return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 4);
                 }else{
                     resultObject.__flag = 2;
-                    return internalParser(resultObject , queryIndex , stack , resultObject.__flag , 4);
+                    return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 4);
                 }
             }
 
@@ -141,6 +148,53 @@ function parser(query){
             }
 
             
+        }else if(flag == 2){
+            console.log(previousCache , "*" , queryCache , "*" , query[queryIndex] , flag , queryIndex);
+            if(query[queryIndex] == '<'){
+                if(queryCache){
+                    let newTextNode = {}
+                    newTextNode.__args = {"tag" : "text" , "content" : queryCache};
+                    resultObject.__children.push(newTextNode);
+                    queryCache = '';
+                }
+                openTagForSecondStep = queryIndex;
+                checkSlashForSecondStep = false;
+                if(previouslyOccupied)
+                    previouslyOccupied = false;
+                return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 2.1);
+            }
+            else if(query[queryIndex] == ' '){
+                if(openTagForSecondStep === -1){
+                    queryCache += query[queryIndex];
+                    return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 2.2);
+                }else{
+                    return internalParser(resultObject , queryIndex + 1 ,stack , resultObject.__flag , 2.3);
+                }
+            }else if(alphanumeric(query[queryIndex])){
+                if(openTagForSecondStep == -1){
+                    queryCache += query[queryIndex];
+                    return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 2.4);
+                }else{
+                
+                if(previouslyOccupied){
+                    queryCache += query[queryIndex];
+                    return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 2.50);
+                }else{
+                    let temp = openTagForSecondStep;
+                    resultObject.__flag = 1;
+                    previouslyOccupied = true;
+                return internalParser(resultObject , temp , stack , resultObject.__flag , 2.51);
+                    }
+                }
+            }else if(query[queryIndex] == '/'){
+                
+                let temp = openTagForSecondStep;
+                resultObject.__flag = 4;
+                return internalParser(resultObject , temp , stack , resultObject.__flag , 2.5);
+            }
+
+        }else{
+            return stack[0];
         }
     }
 
@@ -149,7 +203,7 @@ function parser(query){
     newObject.__args = {};
     newObject.__children = [];
     internalParser(newObject , 0 , [newObject] , newObject.__flag);
-    console.log(newObject.__children , "p");
+    console.log(newObject.__children[0].__children[1].__children[1] , "p");
     //return newObject;
 
 }

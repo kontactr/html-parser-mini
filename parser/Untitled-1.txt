@@ -1,0 +1,14 @@
+0 -> outside
+1 -> encounter <  override space
+2 -> encounter >
+3 -> encounter </ matches previous one
+4 -> encounter > return
+
+<HTML>
+<head>
+<h1 id='main' class='value value'>
+<div>hello world</div>
+<div class='hello world' />
+</h1>
+</head>
+</HTML>

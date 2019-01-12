@@ -2,14 +2,18 @@ const parser = require("./parser/parserOne");
 
 let p = `
 <html>
-<head q=a>
-<body>
-hello world
-</body>
-<quer />
-hello world
-</head>
-<meta />
+    <head>
+        <meta />
+        <meta />
+    </head>
+    <body>
+        <div>
+            <div>
+                <br />
+                <a href=ssssss>Hello World</a>
+            </div>
+        </div>
+    </body>
 </html>
 `;
 

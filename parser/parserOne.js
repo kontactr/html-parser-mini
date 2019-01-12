@@ -25,7 +25,7 @@ function parser(query){
     let queryLength = query.length;
 
     function internalParser(resultObject , queryIndex , stack , flag , step=-1){
-        console.log(query[queryIndex-1] , "$" , queryCache , "%" , previousCache , "&" , step)
+        console.log(query[queryIndex-1] , "$" , queryCache , "%" , previousCache , "&" , step , "^" , stack.length)
         
         if(queryIndex >= queryLength){
             return stack[0];
@@ -56,6 +56,7 @@ function parser(query){
                 newObject.__children = [];
                 resultObject.__children.push(newObject);
                 stack.push(newObject);
+                checkForDirectEnd = false;
                 return internalParser(newObject , queryIndex+1 , stack , newObject.__flag , 1.1);
             }
 
@@ -113,10 +114,11 @@ function parser(query){
                     queryCache = '';
                     inputBlocked = false;
                 }
-                
+                openTagForSecondStep = -1;
                 if(checkForDirectEnd){
                     resultObject.__flag = 4;
-                    return internalParser(resultObject , queryIndex  , stack , resultObject.__flag , 1.5);
+                    previouslyOccupied = false;
+                    return internalParser(resultObject , queryIndex   , stack , resultObject.__flag , 1.5);
                 }else{
                     resultObject.__flag = 2;
                     return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 1.6);
@@ -149,7 +151,7 @@ function parser(query){
 
             
         }else if(flag == 2){
-            console.log(previousCache , "*" , queryCache , "*" , query[queryIndex] , flag , queryIndex);
+            //console.log(previousCache , "*" , queryCache , "*" , query[queryIndex] , flag , queryIndex);
             if(query[queryIndex] == '<'){
                 if(queryCache){
                     let newTextNode = {}
@@ -197,10 +199,13 @@ function parser(query){
             
             if(query[queryIndex] === '>'){
                 let temp = stack.pop();
+                if(stack.length){
                 let temp1 = stack[stack.length - 1];
                 temp1.__flag = 2;
                 openTagForSecondStep = -1;
+                previouslyOccupied = false;
                 return internalParser(temp1 , queryIndex+1 , stack , temp1.__flag , 4.0);
+                }
             }else{
                 return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 4.1);
             }
@@ -212,7 +217,7 @@ function parser(query){
     newObject.__args = {};
     newObject.__children = [];
     internalParser(newObject , 0 , [newObject] , newObject.__flag);
-    console.log(newObject.__children[0].__children , "p");
+    console.log(newObject.__children[00].__children, "p");
     //return newObject;
 
 }

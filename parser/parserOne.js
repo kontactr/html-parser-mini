@@ -154,10 +154,13 @@ function parser(query){
             //console.log(previousCache , "*" , queryCache , "*" , query[queryIndex] , flag , queryIndex);
             if(query[queryIndex] == '<'){
                 if(queryCache){
+                    if(queryCache.trim().length > 0){
                     let newTextNode = {}
                     newTextNode.__args = {"tag" : "text" , "content" : queryCache};
                     resultObject.__children.push(newTextNode);
-                    queryCache = '';
+                    queryCache = ''; }else{
+                        queryCache = '';
+                    }
                 }
                 openTagForSecondStep = queryIndex;
                 checkSlashForSecondStep = false;
@@ -217,7 +220,7 @@ function parser(query){
     newObject.__args = {};
     newObject.__children = [];
     internalParser(newObject , 0 , [newObject] , newObject.__flag);
-    console.log(newObject.__children[00].__children, "p");
+    console.log(newObject.__children[00].__children[1].__children[0].__children[0].__children[1].__children[0], "p");
     //return newObject;
 
 }

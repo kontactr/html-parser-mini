@@ -25,22 +25,22 @@ function parser(query){
     let queryLength = query.length;
 
     function internalParser(resultObject , queryIndex , stack , flag , step=-1){
-        //console.log(query[queryIndex-1] , "$" , queryCache , "%" , previousCache , "&" , step)
+        console.log(query[queryIndex-1] , "$" , queryCache , "%" , previousCache , "&" , step)
         
         if(queryIndex >= queryLength){
             return stack[0];
         }
         //console.log(query[queryIndex] , "Exception" , flag);
         if(query[queryIndex].charCodeAt(0) == 10){
-            return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag);
+            return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , -1);
         }
 
         if(flag == 0){
             if(query[queryIndex] == ' '){
-                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag);
+                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 0.0);
             }else if(query[queryIndex] == '<'){
                 resultObject.__flag = 1;
-                return internalParser(resultObject , queryIndex , stack , resultObject.__flag);
+                return internalParser(resultObject , queryIndex , stack , resultObject.__flag , 0.1);
             }else if( alphanumeric(query[queryIndex]) ){
                 return resultObject;
             }else{
@@ -56,14 +56,14 @@ function parser(query){
                 newObject.__children = [];
                 resultObject.__children.push(newObject);
                 stack.push(newObject);
-                return internalParser(newObject , queryIndex+1 , stack , newObject.__flag , 1);
+                return internalParser(newObject , queryIndex+1 , stack , newObject.__flag , 1.1);
             }
 
             else if(query[queryIndex] == ' '){
                 if(queryCache){
                     inputBlocked = true;
                 }
-                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 2);
+                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 1.2);
             }
 
             else if(query[queryIndex] == '='){
@@ -72,7 +72,7 @@ function parser(query){
                     queryCache = '';
                     inputBlocked = false;
                 }
-                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 2);
+                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 1.3);
             }
 
             else if(query[queryIndex] == '/'){
@@ -93,7 +93,7 @@ function parser(query){
                     inputBlocked = false;
                 }
                 checkForDirectEnd = true;
-                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 5);
+                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 1.4);
             }
 
             else if(query[queryIndex] == '>'){
@@ -116,10 +116,10 @@ function parser(query){
                 
                 if(checkForDirectEnd){
                     resultObject.__flag = 4;
-                    return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 4);
+                    return internalParser(resultObject , queryIndex  , stack , resultObject.__flag , 1.5);
                 }else{
                     resultObject.__flag = 2;
-                    return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 4);
+                    return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 1.6);
                 }
             }
 
@@ -143,7 +143,7 @@ function parser(query){
                     }
                 }
                 queryCache += query[queryIndex];
-                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 3);
+                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 1.7);
 
             }
 
@@ -178,23 +178,32 @@ function parser(query){
                 
                 if(previouslyOccupied){
                     queryCache += query[queryIndex];
-                    return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 2.50);
+                    return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 2.5);
                 }else{
                     let temp = openTagForSecondStep;
                     resultObject.__flag = 1;
                     previouslyOccupied = true;
-                return internalParser(resultObject , temp , stack , resultObject.__flag , 2.51);
+                return internalParser(resultObject , temp , stack , resultObject.__flag , 2.6);
                     }
                 }
             }else if(query[queryIndex] == '/'){
                 
                 let temp = openTagForSecondStep;
                 resultObject.__flag = 4;
-                return internalParser(resultObject , temp , stack , resultObject.__flag , 2.5);
+                return internalParser(resultObject , temp , stack , resultObject.__flag , 2.7);
             }
 
-        }else{
-            return stack[0];
+        }else if(flag == 4) {
+            
+            if(query[queryIndex] === '>'){
+                let temp = stack.pop();
+                let temp1 = stack[stack.length - 1];
+                temp1.__flag = 2;
+                openTagForSecondStep = -1;
+                return internalParser(temp1 , queryIndex+1 , stack , temp1.__flag , 4.0);
+            }else{
+                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 4.1);
+            }
         }
     }
 
@@ -203,7 +212,7 @@ function parser(query){
     newObject.__args = {};
     newObject.__children = [];
     internalParser(newObject , 0 , [newObject] , newObject.__flag);
-    console.log(newObject.__children[0].__children[1].__children[1] , "p");
+    console.log(newObject.__children[0].__children , "p");
     //return newObject;
 
 }

@@ -1,8 +1,17 @@
 const parser = require("./parser/parserOne");
 
-let p = `<html
- hello a=b c =d world w1 w2=w3 >hello world One <div baby=true hello word> parse 
-< b hello q=q de f > q </html>`;
+let p = `
+<html>
+<head q=a>
+<body>
+hello world
+</body>
+<quer />
+hello world
+</head>
+<meta />
+</html>
+`;
 
 let parsedTree = parser.parser(p);
 console.log(parsedTree);

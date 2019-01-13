@@ -11,6 +11,7 @@ function parser(query){
 
     let queryCache = '';
     let previousCache = '';
+    let notAllowedSymbols = ["<" ,">" ,"/" , ""]
 
     let checkForDirectEnd = false;
     let inputBlocked = false;
@@ -41,7 +42,7 @@ function parser(query){
             }else if(query[queryIndex] == '<'){
                 resultObject.__flag = 1;
                 return internalParser(resultObject , queryIndex , stack , resultObject.__flag , 0.1);
-            }else if( alphanumeric(query[queryIndex]) ){
+            }else if( alphanumeric(query[queryIndex]) || que ){
                 return resultObject;
             }else{
                 return resultObject;
@@ -220,7 +221,7 @@ function parser(query){
     newObject.__args = {};
     newObject.__children = [];
     internalParser(newObject , 0 , [newObject] , newObject.__flag);
-    console.log(newObject.__children[00].__children[1].__children[0].__children[0].__children[1].__children[0], "p");
+    console.log(newObject.__children[0].__children[1].__children[3].__children[0].__children[0].__children, "p");
     //return newObject;
 
 }

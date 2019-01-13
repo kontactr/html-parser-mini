@@ -5,14 +5,26 @@ let p = `
     <head>
         <meta />
         <meta />
+        <title>Title</title>
     </head>
     <body>
-        <div>
-            <div>
-                <br />
-                <a href=ssssss>Hello World    </a>
-            </div>
-        </div>
+        <header >
+            <span>Header Section</span>
+        </header>
+        <section>
+            <article>
+            </article>
+            <article>
+            </article>
+        </section>
+        <section>
+            <design>Design Goes Here</design>
+        </section>
+        <footer>
+            <section>
+                <span>Footer Section Goes Here</span>
+            </section>
+        </footer>
     </body>
 </html>
 `;

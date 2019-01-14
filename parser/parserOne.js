@@ -237,8 +237,8 @@ function parser(query){
     newObject.__args = {};
     newObject.__children = [];
     internalParser(newObject , 0 , [newObject] , newObject.__flag);
-    console.log(newObject.__children[0].__children[1].__children[0])
-    //console.log(newObject.__children[0].__children[1].__children[3].__children[0].__children[0].__children, "p");
+    //console.log(newObject.__children[0].__children[1].__children[0])
+    console.log(newObject.__children[0].__children[1].__children[0].__children, "p");
     //return newObject;
 
 }

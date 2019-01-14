@@ -15,6 +15,7 @@ function parser(query){
 
     let checkForDirectEnd = false;
     let inputBlocked = false;
+    let checkForQuotes = false;
 
     //ThirdStartRegion
     let openTagForSecondStep = -1;
@@ -62,7 +63,10 @@ function parser(query){
             }
 
             else if(query[queryIndex] == ' '){
-                if(queryCache){
+                if(checkForQuotes){
+                    queryCache += query[queryIndex];
+                }
+                else if(queryCache){
                     inputBlocked = true;
                 }
                 return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 1.2);
@@ -95,6 +99,7 @@ function parser(query){
                     inputBlocked = false;
                 }
                 checkForDirectEnd = true;
+                checkForQuotes = false;
                 return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 1.4);
             }
 
@@ -116,6 +121,7 @@ function parser(query){
                     inputBlocked = false;
                 }
                 openTagForSecondStep = -1;
+                checkForQuotes = false;
                 if(checkForDirectEnd){
                     resultObject.__flag = 4;
                     previouslyOccupied = false;
@@ -124,6 +130,16 @@ function parser(query){
                     resultObject.__flag = 2;
                     return internalParser(resultObject , queryIndex + 1 , stack , resultObject.__flag , 1.6);
                 }
+            }
+
+
+            else if( (query[queryIndex] === "'" ) || (query[queryIndex] === '"' ) || (query[queryIndex] === "`" )){
+                console.log("Yeessssss");
+                if(checkForQuotes)
+                    checkForQuotes = false;
+                else
+                    checkForQuotes = true;
+                return internalParser(resultObject, queryIndex+1 , stack , resultObject.__flag , 1.65);
             }
 
             else if(alphanumeric(query[queryIndex])){
@@ -221,7 +237,8 @@ function parser(query){
     newObject.__args = {};
     newObject.__children = [];
     internalParser(newObject , 0 , [newObject] , newObject.__flag);
-    console.log(newObject.__children[0].__children[1].__children[3].__children[0].__children[0].__children, "p");
+    console.log(newObject.__children[0].__children[1].__children[0])
+    //console.log(newObject.__children[0].__children[1].__children[3].__children[0].__children[0].__children, "p");
     //return newObject;
 
 }

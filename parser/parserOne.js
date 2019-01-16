@@ -164,6 +164,10 @@ function parser(query){
                 queryCache += query[queryIndex];
                 return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 1.7);
 
+            }else{
+                queryCache += query[queryIndex];
+                return internalParser(resultObject , queryIndex+1 , stack , resultObject.__flag , 1.7);
+
             }
 
             
@@ -241,7 +245,7 @@ function parser(query){
     console.log(newObject.__children[0].__children[1].__children[0].__children, "p");
     console.log();
     console.log();
-    console.log(newObject.__children[0].__children);
+    console.log(newObject.__children[0].__children[1].__children);
     //return newObject;
 
 }

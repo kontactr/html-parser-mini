@@ -8,7 +8,7 @@ let p = `
         <title>Title</title>
     </head>
     <body>
-        <header id=id wq=qt hello qwerty pq='pq' qp="qp" pewe = " pewe " dg=dg pwe  >
+        <header id=id wq=qt hello qwerty pq='pq' qp="qp" pewe = " pewe " dg=dg pwe helloWorld={a:a,b:b,c:[1,2,3],d:f()}  >
             <span>Header Section</span>
             <span pww= "  pwww " />
         </header>
